@@ -269,6 +269,13 @@ function Stats() {
     const [memberList, setMemberList] = useState(null);
     const [submemberList, setSubMemberList] = useState(null);
 
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split("T")[0];
+
+    // 월과 일 가져오기
+    const month = currentDate.getMonth() + 1;
+    const day = currentDate.getDate();
+
     async function getAllDoctorList() {
         try {
             const res = await axiosInstance.get("/doctors/register/list");
@@ -307,60 +314,60 @@ function Stats() {
 
     const data = [
         {
-            month: "6월",
+            month: month - 2 + "월",
             totalUser:
                 memberList?.filter(
-                    (m) => new Date(m.member.createdAt).getMonth() <= 5
+                    (m) => new Date(m.member.createdAt).getMonth() <= month - 3
                 ).length ?? 0,
             registerUser:
                 memberList?.filter(
-                    (m) => new Date(m.member.createdAt).getMonth() === 5
+                    (m) => new Date(m.member.createdAt).getMonth() === month - 3
                 ).length ?? 0,
             subUser:
                 submemberList?.filter(
-                    (s) => new Date(s.createdAt).getMonth() === 5
+                    (s) => new Date(s.createdAt).getMonth() === month - 3
                 ).length ?? 0,
             doctor:
                 doctorList?.filter(
-                    (d) => new Date(d.createdAt).getMonth() === 5
+                    (d) => new Date(d.createdAt).getMonth() === month - 3
                 ).length ?? 0,
         },
         {
-            month: "7월",
+            month: month - 1 + "월",
             totalUser:
                 memberList?.filter(
-                    (m) => new Date(m.member.createdAt).getMonth() <= 6
+                    (m) => new Date(m.member.createdAt).getMonth() <= month - 2
                 ).length ?? 0,
             registerUser:
                 memberList?.filter(
-                    (m) => new Date(m.member.createdAt).getMonth() === 6
+                    (m) => new Date(m.member.createdAt).getMonth() === month - 2
                 ).length ?? 0,
             subUser:
                 submemberList?.filter(
-                    (s) => new Date(s.createdAt).getMonth() === 6
+                    (s) => new Date(s.createdAt).getMonth() === month - 2
                 ).length ?? 0,
             doctor:
                 doctorList?.filter(
-                    (d) => new Date(d.createdAt).getMonth() === 6
+                    (d) => new Date(d.createdAt).getMonth() === month - 2
                 ).length ?? 0,
         },
         {
-            month: "8월",
+            month: month + "월",
             totalUser:
                 memberList?.filter(
-                    (m) => new Date(m.member.createdAt).getMonth() <= 7
+                    (m) => new Date(m.member.createdAt).getMonth() <= month - 1
                 ).length ?? 0,
             registerUser:
                 memberList?.filter(
-                    (m) => new Date(m.member.createdAt).getMonth() === 7
+                    (m) => new Date(m.member.createdAt).getMonth() === month - 1
                 ).length ?? 0,
             subUser:
                 submemberList?.filter(
-                    (s) => new Date(s.createdAt).getMonth() === 7
+                    (s) => new Date(s.createdAt).getMonth() === month - 1
                 ).length ?? 0,
             doctor:
                 doctorList?.filter(
-                    (d) => new Date(d.createdAt).getMonth() === 7
+                    (d) => new Date(d.createdAt).getMonth() === month - 1
                 ).length ?? 0,
         },
     ];
@@ -413,6 +420,7 @@ function Stats() {
             </div>
             <p className="text-center">
                 최근 3개월동안의 데이터만 확인가능합니다.
+                {/* {formattedDate} */}
             </p>
             <AdminNav />
         </>
