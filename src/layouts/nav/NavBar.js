@@ -73,7 +73,8 @@ function NavBar() {
         },
         {
             title: "마이페이지",
-            route: "/users/login",
+            // route: "/users/login",
+            route: "/intro",
             grayIcon: "account_gray",
             blackIcon: "account_black",
         },
@@ -108,7 +109,8 @@ function NavBar() {
                         const isActive = location.pathname === item.route;
                         const isActive2 = location.pathname === item.route2;
                         // console.log(location.pathname);
-                        return item.route == "/users/login" ? (
+                        return item.route == "/intro" ? (
+                            // return item.route == "/users/login" ? (
                             <ModalManager
                                 modalContent={({ closeModal }) => (
                                     <div>
@@ -120,7 +122,8 @@ function NavBar() {
                                             text1="로그인페이지로"
                                             text2="원래페이지로"
                                             handleClick={(e) => {
-                                                navigate("/users/login");
+                                                // navigate("/users/login");
+                                                navigate("/intro");
                                                 closeModal();
                                             }}
                                             handleClick2={(e) => {
