@@ -93,11 +93,6 @@ function AppointmentApproval() {
     return (
         <>
             <Header title="예약 관리 페이지" />
-            <div className="flex justify-end gap-[4px]">
-                <p className="text-primary-300 font-bold">수락대기</p>
-                <p className="text-gray-300">| 확정된 요청 |</p>
-                <p className="text-gray-300">만료 및 거절된 요청</p>
-            </div>
             {Array.isArray(appointmentList) ? (
                 <>
                     {/* PENDING 상태의 예약 */}
@@ -232,7 +227,7 @@ function AppointmentApproval() {
                             </div>
                         ))}
 
-                    {/* ##################나머지 상태의 예약################ */}
+                    {/* 나머지 상태의 예약 */}
                     {appointmentList
                         .filter(
                             (appointment) => appointment.status !== "PENDING"
