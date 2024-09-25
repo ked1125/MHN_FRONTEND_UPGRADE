@@ -38,11 +38,7 @@ function Appointment() {
     for (let i = 0; i < 7; i++) {
         const date = new Date(currentDate);
         date.setDate(currentDate.getDate() + i);
-        week.push({
-            day: date.getDate(),
-            month: date.getMonth() + 1,
-            year: date.getFullYear(),
-        });
+        week.push(date.getDate());
         weekDays.push(weekdays[date.getDay()]);
     }
 
@@ -52,23 +48,13 @@ function Appointment() {
         }
     }, [selectedTime]);
 
-    // useEffect(() => {
-    //     if (selectedDay !== null && selectedTime !== null) {
-    //         const year = currentDate.getFullYear();
-    //         const month = currentDate.getMonth();
-    //         const formattedDateTime = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}T${selectedTime}:00`;
-    //         setLocalDateTime(formattedDateTime);
-    //         console.log("LocalDateTime 형식:", formattedDateTime);
-    //     }
-    // }, [selectedDay, selectedTime]);
     useEffect(() => {
         if (selectedDay !== null && selectedTime !== null) {
-            const selectedDate = week.find((d) => d.day === selectedDay);
-            if (selectedDate) {
-                const formattedDateTime = `${selectedDate.year}-${String(selectedDate.month).padStart(2, "0")}-${String(selectedDate.day).padStart(2, "0")}T${selectedTime}:00`;
-                setLocalDateTime(formattedDateTime);
-                console.log("LocalDateTime 형식:", formattedDateTime);
-            }
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const formattedDateTime = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}T${selectedTime}:00`;
+            setLocalDateTime(formattedDateTime);
+            console.log("LocalDateTime 형식:", formattedDateTime);
         }
     }, [selectedDay, selectedTime]);
     const isTimeDisabled = (time) => {
@@ -89,8 +75,7 @@ function Appointment() {
             return appointmentList.some(
                 (appointment) =>
                     appointment.appointmentDateTime === formattedDateTime &&
-                    (appointment.status === "APPROVED" || "PENDING")
-                // (appointment.status === "APPROVED")
+                    appointment.status === "APPROVED"
             );
         }
 
@@ -153,17 +138,17 @@ function Appointment() {
             <div>{month}월</div>
             <div>{day}일</div>
             <div className="flex justify-around border-b border-gray-100 py-[8px] mb-[36px]">
-                {week.map((dayInfo, index) =>
-                    selectedDay == dayInfo.day ? (
+                {week.map((day, index) =>
+                    selectedDay == day ? (
                         <button key={index}>
                             <div
                                 className="text-center "
                                 onClick={() => {
-                                    setSelectedDay(dayInfo.day);
+                                    setSelectedDay(day);
                                 }}
                             >
                                 <p className="bg-sub-200 rounded-[50px] px-[8px] py-[4px] text-gray-100">
-                                    {dayInfo.day}
+                                    {day}
                                 </p>
                                 <p
                                     className={
@@ -183,7 +168,7 @@ function Appointment() {
                             <div
                                 className="text-center"
                                 onClick={() => {
-                                    setSelectedDay(dayInfo.day);
+                                    setSelectedDay(day);
                                 }}
                             >
                                 <p
@@ -195,7 +180,7 @@ function Appointment() {
                                               : ""
                                     }
                                 >
-                                    {dayInfo.day}
+                                    {day}
                                 </p>
                                 <p
                                     className={

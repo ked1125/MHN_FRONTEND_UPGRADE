@@ -4,10 +4,12 @@ import DoctorNav from "../../layouts/nav/DoctorNav";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../utils/axios";
+import HospitalAppointmentForm from "../../components/Form/HospitalAppointmentForm";
 
 function AppointmentApproval() {
-    const [appointmentList, setAppointmentList] = useState(null);
+    const [allAppointmentList, setAllAppointmentList] = useState(null);
     const [patchAppointmentList, setPatchAppointmentList] = useState(null);
+    const [filterStatus, setFilterStatus] = useState("PENDING");
     const loginState = useSelector((state) => state.userSlice);
     console.log(loginState);
 
@@ -17,7 +19,7 @@ function AppointmentApproval() {
                 `/hospital/appointment?hospitalId=${loginState.hospital.id}`
             );
             console.log(res.data);
-            setAppointmentList(res.data);
+            setAllAppointmentList(res.data);
         } catch (error) {
             console.log(error);
         }
@@ -59,8 +61,8 @@ function AppointmentApproval() {
 
     // 새로운 함수: 과거의 PENDING 예약을 자동으로 거절
     const autoRejectPastAppointments = () => {
-        if (Array.isArray(appointmentList)) {
-            appointmentList.forEach((appointment) => {
+        if (Array.isArray(allAppointmentList)) {
+            allAppointmentList.forEach((appointment) => {
                 if (
                     appointment.status === "PENDING" &&
                     isPastAppointment(appointment.appointmentDateTime)
@@ -71,13 +73,25 @@ function AppointmentApproval() {
         }
     };
 
+    // 필터 상태를 변경하는 함수
+    const handleFilterChange = (status) => {
+        setFilterStatus(status);
+    };
+
+    // 필터링된 예약 목록
+    const filteredAppointmentList = allAppointmentList
+        ? allAppointmentList.filter(
+              (appointment) => appointment.status === filterStatus
+          )
+        : [];
+
     useEffect(() => {
         getAllAppointmentList();
     }, []);
 
     useEffect(() => {
         autoRejectPastAppointments();
-    }, [appointmentList]);
+    }, [allAppointmentList]);
 
     // loginState가 없거나 doctorStatus가 PENDING이면 아무것도 렌더링하지 않습니다.
     if (!loginState.hospital || loginState.doctorStatus === "PENDING") {
@@ -93,280 +107,34 @@ function AppointmentApproval() {
     return (
         <>
             <Header title="예약 관리 페이지" />
-            <div className="flex justify-end gap-[4px]">
-                <p className="text-primary-300 font-bold">수락대기</p>
-                <p className="text-gray-300">| 확정된 요청 |</p>
-                <p className="text-gray-300">만료 및 거절된 요청</p>
+            <div className="flex justify-end gap-[8px] mt-[16px]">
+                <p
+                    className={`${filterStatus === "PENDING" ? "text-primary-300 font-bold" : "text-gray-300"} cursor-pointer`}
+                    onClick={() => handleFilterChange("PENDING")}
+                >
+                    수락대기
+                </p>
+                <p
+                    className={`${filterStatus === "APPROVED" ? "text-primary-300 font-bold" : "text-gray-300"} cursor-pointer border-r border-l px-[8px]`}
+                    onClick={() => handleFilterChange("APPROVED")}
+                >
+                    확정된 요청
+                </p>
+                <p
+                    className={`${filterStatus === "REJECTED" ? "text-primary-300 font-bold" : "text-gray-300"} cursor-pointer`}
+                    onClick={() => handleFilterChange("REJECTED")}
+                >
+                    거절된 요청
+                </p>
             </div>
-            {Array.isArray(appointmentList) ? (
-                <>
-                    {/* PENDING 상태의 예약 */}
-                    {appointmentList
-                        .filter(
-                            (appointment) => appointment.status === "PENDING"
-                        )
-                        .map((appointment) => (
-                            <div
-                                key={appointment.id}
-                                className={`border border-gray-600 rounded-md p-4 mt-8 ${
-                                    appointment.status === "PENDING"
-                                        ? "hover:border-blue-200 hover:shadow-md transition duration-300"
-                                        : ""
-                                }`}
-                            >
-                                <div className="flex justify-between body2 text-sub-200">
-                                    {/* 병원 정보 시작 */}
-                                    <div className="flex flex-col gap-2 mb-2 w-3/4">
-                                        <p className="subtitle1 text-primary-300">
-                                            <span className="body2 text-sub-100">
-                                                이름 :{" "}
-                                            </span>
-                                            {appointment.member.name}
-                                        </p>
-                                        <p className="body2 text-sub-800">
-                                            <span className="body2 text-sub-100">
-                                                닉네임 :{" "}
-                                            </span>
-                                            {appointment.member.nickName}
-                                        </p>
-                                        <p className="body2 text-sub-800">
-                                            <span className="body2 text-sub-100">
-                                                연락처 :{" "}
-                                            </span>
-                                            {appointment.member.tel}
-                                        </p>
-                                        {/* <p className="body3 text-sub-800">
-                                    <span className="body2 text-sub-100">
-                                        예약일자 :{" "}
-                                    </span>
-                                    {appointment.appointmentDateTime}
-                                </p> */}
-                                    </div>
-                                    {/* 병원 정보 종료  */}
-
-                                    {/* 요청 상태 시작 */}
-                                    <div className="flex gap-1 h-3 items-center">
-                                        <span
-                                            className={`inline-block w-3 h-3 rounded-full ${appointment.status === "APPROVED" ? "bg-green-800" : appointment.status === "PENDING" ? "bg-yellow-500" : "bg-red-600"}`}
-                                        ></span>
-                                        <span
-                                            className={`mini ${appointment.status === "APPROVED" ? "text-green-800" : appointment.status === "PENDING" ? "text-yellow-500" : "text-red-600"}`}
-                                        >
-                                            {appointment.status === "APPROVED"
-                                                ? "예약확정"
-                                                : appointment.status ===
-                                                    "PENDING"
-                                                  ? "수락대기"
-                                                  : "거절 완료"}
-                                        </span>
-                                    </div>
-                                    {/* 요청 상태 종료  */}
-                                </div>
-
-                                <div className="border-t border-dashed border-gray-700 flex justify-between pt-3">
-                                    {/* <p className="body2 text-primary-300">
-                                가입{" "}
-                                <span className="body3 text-gray-300 ml-1">
-                                    {doctors.createdAt}
-                                </span>
-                            </p> */}
-                                    <p className="body3 text-sub-800">
-                                        <span className="body2 text-sub-100">
-                                            예약일자 :{" "}
-                                        </span>
-                                        {formatDate(
-                                            appointment.appointmentDateTime
-                                        )}
-                                    </p>
-
-                                    {/* 버튼 시작 */}
-                                    <div className="flex gap-[4px]">
-                                        {appointment.status === "PENDING" && (
-                                            <button
-                                                className="mini py-[6px] px-[14px] rounded-md bg-primary-300 text-primary-400 hover:bg-sub-200"
-                                                onClick={() =>
-                                                    requestApproval(
-                                                        appointment.id,
-                                                        "APPROVED"
-                                                    )
-                                                }
-                                                // PENDING -> APPROVED로 변경하는 로직
-                                            >
-                                                요청수락
-                                            </button>
-                                        )}
-
-                                        {/* <button
-                                    className={`mini py-[6px] px-[14px] rounded-md ${
-                                        doctors.doctorStatus ===
-                                            "APPROVED" ||
-                                        doctors.doctorStatus === "REJECTED"
-                                            ? "bg-gray-300 text-gray-600"
-                                            : "bg-primary-300 text-primary-400 hover:bg-sub-200"
-                                    }`} */}
-                                        <button
-                                            className={`mini py-[6px] px-[14px] rounded-md ${
-                                                appointment.status !== "PENDING"
-                                                    ? "bg-gray-300 text-gray-600"
-                                                    : "bg-primary-300 text-primary-400 hover:bg-sub-200"
-                                            }`}
-                                            onClick={
-                                                () =>
-                                                    requestApproval(
-                                                        appointment.id,
-                                                        "REJECTED"
-                                                    )
-                                                //  PENDING -> REJECTED로 변경하는 로직
-                                            }
-                                            disabled={
-                                                appointment.status !== "PENDING"
-                                            }
-                                        >
-                                            {appointment.status !== "PENDING"
-                                                ? "처리완료"
-                                                : "요청거절"}
-                                        </button>
-                                    </div>
-                                    {/* 버튼 종료  */}
-                                </div>
-                            </div>
-                        ))}
-
-                    {/* ##################나머지 상태의 예약################ */}
-                    {appointmentList
-                        .filter(
-                            (appointment) => appointment.status !== "PENDING"
-                        )
-                        .map((appointment) => (
-                            <div
-                                key={appointment.id}
-                                className={`border border-gray-600 rounded-md p-4 mt-8 ${
-                                    appointment.status === "PENDING"
-                                        ? "hover:border-blue-200 hover:shadow-md transition duration-300"
-                                        : ""
-                                }`}
-                            >
-                                <div className="flex justify-between body2 text-sub-200">
-                                    {/* 병원 정보 시작 */}
-                                    <div className="flex flex-col gap-2 mb-2 w-3/4">
-                                        <p className="subtitle1 text-primary-300">
-                                            <span className="body2 text-sub-100">
-                                                이름 :{" "}
-                                            </span>
-                                            {appointment.member.name}
-                                        </p>
-                                        <p className="body2 text-sub-800">
-                                            <span className="body2 text-sub-100">
-                                                닉네임 :{" "}
-                                            </span>
-                                            {appointment.member.nickName}
-                                        </p>
-                                        <p className="body2 text-sub-800">
-                                            <span className="body2 text-sub-100">
-                                                연락처 :{" "}
-                                            </span>
-                                            {appointment.member.tel}
-                                        </p>
-                                        {/* <p className="body3 text-sub-800">
-                                    <span className="body2 text-sub-100">
-                                        예약일자 :{" "}
-                                    </span>
-                                    {appointment.appointmentDateTime}
-                                </p> */}
-                                    </div>
-                                    {/* 병원 정보 종료  */}
-
-                                    {/* 요청 상태 시작 */}
-                                    <div className="flex gap-1 h-3 items-center">
-                                        <span
-                                            className={`inline-block w-3 h-3 rounded-full ${appointment.status === "APPROVED" ? "bg-green-800" : appointment.status === "PENDING" ? "bg-yellow-500" : "bg-red-600"}`}
-                                        ></span>
-                                        <span
-                                            className={`mini ${appointment.status === "APPROVED" ? "text-green-800" : appointment.status === "PENDING" ? "text-yellow-500" : "text-red-600"}`}
-                                        >
-                                            {appointment.status === "APPROVED"
-                                                ? "예약확정"
-                                                : appointment.status ===
-                                                    "PENDING"
-                                                  ? "수락대기"
-                                                  : "거절 완료"}
-                                        </span>
-                                    </div>
-                                    {/* 요청 상태 종료  */}
-                                </div>
-
-                                <div className="border-t border-dashed border-gray-700 flex justify-between pt-3">
-                                    {/* <p className="body2 text-primary-300">
-                                가입{" "}
-                                <span className="body3 text-gray-300 ml-1">
-                                    {doctors.createdAt}
-                                </span>
-                            </p> */}
-                                    <p className="body3 text-sub-800">
-                                        <span className="body2 text-sub-100">
-                                            예약일자 :{" "}
-                                        </span>
-                                        {formatDate(
-                                            appointment.appointmentDateTime
-                                        )}
-                                    </p>
-
-                                    {/* 버튼 시작 */}
-                                    <div className="flex gap-[4px]">
-                                        {appointment.status === "PENDING" && (
-                                            <button
-                                                className="mini py-[6px] px-[14px] rounded-md bg-primary-300 text-primary-400 hover:bg-sub-200"
-                                                onClick={() =>
-                                                    requestApproval(
-                                                        appointment.id,
-                                                        "APPROVED"
-                                                    )
-                                                }
-                                                // PENDING -> APPROVED로 변경하는 로직
-                                            >
-                                                요청수락
-                                            </button>
-                                        )}
-
-                                        {/* <button
-                                    className={`mini py-[6px] px-[14px] rounded-md ${
-                                        doctors.doctorStatus ===
-                                            "APPROVED" ||
-                                        doctors.doctorStatus === "REJECTED"
-                                            ? "bg-gray-300 text-gray-600"
-                                            : "bg-primary-300 text-primary-400 hover:bg-sub-200"
-                                    }`} */}
-                                        <button
-                                            className={`mini py-[6px] px-[14px] rounded-md ${
-                                                appointment.status !== "PENDING"
-                                                    ? "bg-gray-300 text-gray-600"
-                                                    : "bg-primary-300 text-primary-400 hover:bg-sub-200"
-                                            }`}
-                                            onClick={
-                                                () =>
-                                                    requestApproval(
-                                                        appointment.id,
-                                                        "REJECTED"
-                                                    )
-                                                //  PENDING -> REJECTED로 변경하는 로직
-                                            }
-                                            disabled={
-                                                appointment.status !== "PENDING"
-                                            }
-                                        >
-                                            {appointment.status !== "PENDING"
-                                                ? "처리완료"
-                                                : "요청거절"}
-                                        </button>
-                                    </div>
-                                    {/* 버튼 종료  */}
-                                </div>
-                            </div>
-                        ))}
-                </>
-            ) : (
-                <p>예약 정보를 불러오는 중입니다...</p>
+            {allAppointmentList && (
+                <HospitalAppointmentForm
+                    appointmentList={filteredAppointmentList}
+                    formatDate={formatDate}
+                    requestApproval={requestApproval}
+                />
             )}
+
             <DoctorNav />
         </>
     );
