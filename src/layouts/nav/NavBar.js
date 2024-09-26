@@ -135,7 +135,7 @@ function NavBar() {
                             >
                                 {({ openModal }) => (
                                     <div onClick={openModal}>
-                                        <li className="text-center mini">
+                                        <li className="text-center mini cursor-pointer">
                                             <img
                                                 src={`/assets/images/${isActive ? item.blackIcon : isActive2 ? item.blackIcon : item.grayIcon}.svg`}
                                                 className="m-auto"
@@ -147,7 +147,7 @@ function NavBar() {
                             </ModalManager>
                         ) : (
                             <Link to={item.route} key={idx}>
-                                <li className="text-center mini">
+                                <li className="text-center mini cursor-pointer">
                                     <img
                                         src={`/assets/images/${isActive ? item.blackIcon : isActive2 ? item.blackIcon : item.grayIcon}.svg`}
                                         className="m-auto"

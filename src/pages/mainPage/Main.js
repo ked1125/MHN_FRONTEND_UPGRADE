@@ -155,149 +155,7 @@ function Main() {
                     <MainSlider />
                 </div>
                 <div className="bg-whit pt-7 px-4 ">
-                    <div className="mb-[45px] flex flex-col gap-4">
-                        <div className="flex items-center">
-                            <Link to="/boards" className="flex">
-                                <p className="title text-primary-300">
-                                    자유게시판
-                                </p>
-                                <img src="/assets/images/nextIcon.svg" />
-                            </Link>
-                        </div>
-                        <div className="px-[4px]">
-                            <div className="overflow-hidden">
-                                <Swiper
-                                    spaceBetween={8}
-                                    slidesPerView={"auto"}
-                                    className="mySwiper"
-                                >
-                                    {boardPosts.length > 0 ? (
-                                        boardPosts.map((post) => (
-                                            <SwiperSlide
-                                                key={post.id}
-                                                className="!w-auto"
-                                            >
-                                                <div
-                                                    onClick={() =>
-                                                        navigateToPage(
-                                                            `/boards/${post.id}`
-                                                        )
-                                                    }
-                                                    className="cursor-pointer"
-                                                >
-                                                    <div className="bg-white w-[300px] py-3 rounded-[4px] border px-4 border-gray-400">
-                                                        <div className="w-[270px] h-[160px] mb-[4px] rounded-[4px] overflow-hidden bg-gray-200">
-                                                            {post.imageList &&
-                                                                post.imageList
-                                                                    .length >
-                                                                    0 && (
-                                                                    <img
-                                                                        src={`${process.env.REACT_APP_SPRING_SERVER_UPLOAD_URL}/upload/${post.imageList[0].fileName}`}
-                                                                        className="w-full h-full object-cover rounded-[4px]"
-                                                                        alt="Post Image"
-                                                                    />
-                                                                )}
-                                                        </div>
-                                                        <div className="flex justify-between mt-2">
-                                                            <p className="body2 text-primary-300">
-                                                                {post.title}
-                                                            </p>
-                                                            <div className="flex items-center">
-                                                                <img
-                                                                    src="/assets/images/likeIcon_color.svg"
-                                                                    alt="Like Icon"
-                                                                />
-                                                                <p className="ml-1 subtitle1 text-sub-100">
-                                                                    {post.likeCount ||
-                                                                        0}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </SwiperSlide>
-                                        ))
-                                    ) : (
-                                        <p className="body1 text-sub-100">
-                                            아직 게시판 정보가 없습니다.
-                                        </p>
-                                    )}
-                                </Swiper>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mb-[45px] flex flex-col gap-4">
-                        <div className="flex items-center mb-[5px]">
-                            <Link to="/chatboards" className="flex">
-                                <p className="title text-primary-300">
-                                    1:1 채팅 게시판
-                                </p>
-                                <img src="/assets/images/nextIcon.svg" />
-                            </Link>
-                        </div>
-                        <div>
-                            {firstChatRoom ? (
-                                <ul>
-                                    <Link
-                                        to={`/chatboards/${firstChatRoom?.senderId}/${firstChatRoom?.recipientId}`}
-                                        className="flex "
-                                    >
-                                        <li className="mb-5 flex flex-col gap-1">
-                                            <p className="body1 text-primary-300">
-                                                {firstChatRoom?.title}
-                                            </p>
-                                            <p className="body2 text-sub-100">
-                                                {firstChatRoom?.address}
-                                            </p>
-                                            <div className="flex gap-[4px] mini text-gray-300">
-                                                <p>
-                                                    writer ID:{" "}
-                                                    {firstChatRoom?.senderId}
-                                                </p>
-                                                <p>
-                                                    | 좋아요{" "}
-                                                    {firstChatRoom?.likes}
-                                                </p>
-                                                <img src="/assets/images/likeIcon_color.svg" />
-                                            </div>
-                                        </li>
-                                    </Link>
-                                    {secondChatRoom && (
-                                        <Link
-                                            to={`/chatboards/${secondChatRoom?.senderId}/${secondChatRoom?.recipientId}`}
-                                            className="flex"
-                                        >
-                                            <li className="flex flex-col gap-1">
-                                                <p className="body1 text-primary-300">
-                                                    {secondChatRoom?.title}
-                                                </p>
-                                                <p className="body2 text-sub-100">
-                                                    {secondChatRoom?.address}
-                                                </p>
-                                                <div className="flex gap-[4px] mini text-gray-300">
-                                                    <p>
-                                                        writer ID:{" "}
-                                                        {
-                                                            secondChatRoom?.senderId
-                                                        }
-                                                    </p>
-                                                    <p>
-                                                        | 좋아요{" "}
-                                                        {secondChatRoom?.likes}
-                                                    </p>
-                                                    <img src="/assets/images/likeIcon_color.svg" />
-                                                </div>
-                                            </li>
-                                        </Link>
-                                    )}
-                                </ul>
-                            ) : (
-                                <div className="ml-[5px] body1 text-sub-100">
-                                    아직 채팅방이 없습니다.
-                                </div>
-                            )}
-                        </div>
-                    </div>
+                    {/* 내근처병원 s */}
                     <div className="flex flex-col gap-4 mb-7">
                         <div className="flex items-center">
                             <Link to="/hospitals/map" className="flex">
@@ -377,6 +235,154 @@ function Main() {
                             </Swiper>
                         </div>
                     </div>
+                    {/* 내근처병원 e */}
+                    {/* 자유게시판 스와이퍼 s */}
+                    <div className="mb-[45px] flex flex-col gap-4">
+                        <div className="flex items-center">
+                            <Link to="/boards" className="flex">
+                                <p className="title text-primary-300">
+                                    자유게시판
+                                </p>
+                                <img src="/assets/images/nextIcon.svg" />
+                            </Link>
+                        </div>
+                        <div className="px-[4px]">
+                            <div className="overflow-hidden">
+                                <Swiper
+                                    spaceBetween={8}
+                                    slidesPerView={"auto"}
+                                    className="mySwiper"
+                                >
+                                    {boardPosts.length > 0 ? (
+                                        boardPosts.map((post) => (
+                                            <SwiperSlide
+                                                key={post.id}
+                                                className="!w-auto"
+                                            >
+                                                <div
+                                                    onClick={() =>
+                                                        navigateToPage(
+                                                            `/boards/${post.id}`
+                                                        )
+                                                    }
+                                                    className="cursor-pointer"
+                                                >
+                                                    <div className="bg-white w-[300px] py-3 rounded-[4px] border px-4 border-gray-400">
+                                                        <div className="w-[270px] h-[160px] mb-[4px] rounded-[4px] overflow-hidden bg-gray-200">
+                                                            {post.imageList &&
+                                                                post.imageList
+                                                                    .length >
+                                                                    0 && (
+                                                                    <img
+                                                                        src={`${process.env.REACT_APP_SPRING_SERVER_UPLOAD_URL}/upload/${post.imageList[0].fileName}`}
+                                                                        className="w-full h-full object-cover rounded-[4px]"
+                                                                        alt="Post Image"
+                                                                    />
+                                                                )}
+                                                        </div>
+                                                        <div className="flex justify-between mt-2">
+                                                            <p className="body2 text-primary-300">
+                                                                {post.title}
+                                                            </p>
+                                                            <div className="flex items-center">
+                                                                <img
+                                                                    src="/assets/images/likeIcon_color.svg"
+                                                                    alt="Like Icon"
+                                                                />
+                                                                <p className="ml-1 subtitle1 text-sub-100">
+                                                                    {post.likeCount ||
+                                                                        0}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </SwiperSlide>
+                                        ))
+                                    ) : (
+                                        <p className="body1 text-sub-100">
+                                            아직 게시판 정보가 없습니다.
+                                        </p>
+                                    )}
+                                </Swiper>
+                            </div>
+                        </div>
+                    </div>
+                    {/* 자유게시판 스와이퍼 e */}
+                    {/* 채팅게시판 구간 s */}
+                    <div className="mb-[45px] flex flex-col gap-4">
+                        <div className="flex items-center mb-[5px]">
+                            <Link to="/chatboards" className="flex">
+                                <p className="title text-primary-300">
+                                    1:1 채팅 게시판
+                                </p>
+                                <img src="/assets/images/nextIcon.svg" />
+                            </Link>
+                        </div>
+                        <div>
+                            {firstChatRoom ? (
+                                <ul>
+                                    <Link
+                                        to={`/chatboards/${firstChatRoom?.senderId}/${firstChatRoom?.recipientId}`}
+                                        className="flex "
+                                    >
+                                        <li className="mb-5 flex flex-col gap-1">
+                                            <p className="body1 text-primary-300">
+                                                {firstChatRoom?.title}
+                                            </p>
+                                            <p className="body2 text-sub-100">
+                                                {firstChatRoom?.address}
+                                            </p>
+                                            <div className="flex gap-[4px] mini text-gray-300">
+                                                <p>
+                                                    writer ID:{" "}
+                                                    {firstChatRoom?.senderId}
+                                                </p>
+                                                <p>
+                                                    | 좋아요{" "}
+                                                    {firstChatRoom?.likes}
+                                                </p>
+                                                <img src="/assets/images/likeIcon_color.svg" />
+                                            </div>
+                                        </li>
+                                    </Link>
+                                    {secondChatRoom && (
+                                        <Link
+                                            to={`/chatboards/${secondChatRoom?.senderId}/${secondChatRoom?.recipientId}`}
+                                            className="flex"
+                                        >
+                                            <li className="flex flex-col gap-1">
+                                                <p className="body1 text-primary-300">
+                                                    {secondChatRoom?.title}
+                                                </p>
+                                                <p className="body2 text-sub-100">
+                                                    {secondChatRoom?.address}
+                                                </p>
+                                                <div className="flex gap-[4px] mini text-gray-300">
+                                                    <p>
+                                                        writer ID:{" "}
+                                                        {
+                                                            secondChatRoom?.senderId
+                                                        }
+                                                    </p>
+                                                    <p>
+                                                        | 좋아요{" "}
+                                                        {secondChatRoom?.likes}
+                                                    </p>
+                                                    <img src="/assets/images/likeIcon_color.svg" />
+                                                </div>
+                                            </li>
+                                        </Link>
+                                    )}
+                                </ul>
+                            ) : (
+                                <div className="ml-[5px] body1 text-sub-100">
+                                    아직 채팅방이 없습니다.
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    {/* 채팅게시판 구간 e */}
                 </div>
 
                 <PlusButton />
