@@ -48,7 +48,8 @@ function AppointmentApproval() {
             // 전체 목록 다시 로드
             getAllAppointmentList();
         } catch (error) {
-            console.log(error);
+            console.log(error.res?.data || "예약 처리 중 오류가 발생했습니다.");
+            alert(error.res?.data || "이미 확정된 예약이 있습니다.");
         }
     }
 

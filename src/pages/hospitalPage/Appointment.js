@@ -71,30 +71,71 @@ function Appointment() {
             }
         }
     }, [selectedDay, selectedTime]);
+    // const isTimeDisabled = (time) => {
+    //     if (selectedDay === null) return true; // 날짜가 선택되지 않았으면 모든 시간 비활성화
+    //     if (selectedDay === day) {
+    //         const [hours, minutes] = time.split(":").map(Number);
+    //         const selectedDateTime = new Date(currentDate);
+    //         selectedDateTime.setHours(hours, minutes, 0, 0);
+
+    //         // 현재 시간보다 이전인 경우 비활성화
+    //         if (selectedDateTime <= currentDate) return true;
+    //     }
+
+    //     // 이미 예약된 상태인지 확인
+    //     if (appointmentList && appointmentList.length > 0) {
+    //         const year = currentDate.getFullYear();
+    //         const month = currentDate.getMonth() + 1;
+    //         const formattedDateTime = `${year}-${String(month).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}T${time}:00`;
+
+    //         return appointmentList.some(
+    //             (appointment) =>
+    //                 appointment.appointmentDateTime === formattedDateTime &&
+    //                 // (appointment.status === "APPROVED" || "PENDING")
+    //                 appointment.status === "APPROVED"
+    //         );
+    //     }
+
+    //     return false; // appointmentList가 null이거나 비어있으면 시간을 활성화 상태로 유지
+    // };
     const isTimeDisabled = (time) => {
         if (selectedDay === null) return true; // 날짜가 선택되지 않았으면 모든 시간 비활성화
-        if (selectedDay === day) {
-            const [hours, minutes] = time.split(":").map(Number);
-            const selectedDateTime = new Date(currentDate);
-            selectedDateTime.setHours(hours, minutes, 0, 0);
-            if (selectedDateTime <= currentDate) return true;
-        }
 
-        // 이미 예약된 상태인지 확인
+        const selectedDate = week.find((d) => d.day === selectedDay);
+        if (!selectedDate) return true;
+
+        const currentDate = new Date();
+        const selectedDateTime = new Date(
+            selectedDate.year,
+            selectedDate.month - 1,
+            selectedDate.day
+        );
+        const [hours, minutes] = time.split(":").map(Number);
+        selectedDateTime.setHours(hours, minutes, 0, 0);
+
+        // 현재 시간보다 이전인 경우 비활성화
+        if (selectedDateTime <= currentDate) return true;
+
+        // APPROVED 상태의 예약 확인
         if (appointmentList && appointmentList.length > 0) {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth() + 1;
-            const formattedDateTime = `${year}-${String(month).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}T${time}:00`;
+            const formattedDateTime = `${selectedDate.year}-${String(selectedDate.month).padStart(2, "0")}-${String(selectedDate.day).padStart(2, "0")}T${time}:00`;
 
-            return appointmentList.some(
-                (appointment) =>
-                    appointment.appointmentDateTime === formattedDateTime &&
-                    (appointment.status === "APPROVED" || "PENDING")
-                // (appointment.status === "APPROVED")
-            );
+            return appointmentList.some((appointment) => {
+                const appointmentDate = new Date(
+                    appointment.appointmentDateTime
+                );
+                return (
+                    appointmentDate.getFullYear() === selectedDate.year &&
+                    appointmentDate.getMonth() + 1 === selectedDate.month &&
+                    appointmentDate.getDate() === selectedDate.day &&
+                    appointmentDate.getHours() === hours &&
+                    appointmentDate.getMinutes() === minutes &&
+                    appointment.status === "APPROVED"
+                );
+            });
         }
 
-        return false; // appointmentList가 null이거나 비어있으면 시간을 활성화 상태로 유지
+        return false;
     };
 
     const openModal = () => {
